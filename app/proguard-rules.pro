@@ -1,8 +1,8 @@
--keep class com.tonespace.app.** { *; }
--keep class dagger.hilt.** { *; }
--keep class * implements dagger.hilt.android.internal.managers.BindingModule { *; }
--assumenosideeffects class android.util.Log {
-    public static *** v(...);
-    public static *** d(...);
-    public static *** i(...);
-}
+﻿-keep class com.streamapp.models.** { *; }
+-keep class com.streamapp.api.** { *; }
+-keepattributes Signature
+-keepattributes *Annotation*
+-dontwarn okhttp3.**
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keep class com.bumptech.glide.** { *; }
