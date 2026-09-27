@@ -47,8 +47,8 @@ class PlayerActivity : AppCompatActivity() {
 
     private fun setupAd() {
         val adBanner = com.google.android.gms.ads.AdView(this)
-        adBanner.adSize = AdSize.BANNER
-        adBanner.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+        adBanner.setAdSize(AdSize.BANNER)
+        adBanner.setAdUnitId("ca-app-pub-3940256099942544/6300978111")
         val adRequest = AdRequest.Builder().build()
         adBanner.loadAd(adRequest)
 
