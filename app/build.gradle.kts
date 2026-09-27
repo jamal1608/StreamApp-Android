@@ -34,10 +34,6 @@ android {
     kotlinOptions {
         jvmTarget = "17"
     }
-
-    aaptOptions {
-        noCompress "txt", "json", "xml"
-    }
 }
 
 dependencies {
