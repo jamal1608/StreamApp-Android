@@ -2,6 +2,7 @@
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -13,43 +14,43 @@ import java.util.concurrent.TimeUnit
 interface FreeApiService {
 
     @GET("trending/movie/week")
-    suspend fun getPopularMovies(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBMovieResponse
+    suspend fun getPopularMovies(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBMovieResponse>
 
     @GET("movie/now_playing")
-    suspend fun getNowPlayingMovies(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBMovieResponse
+    suspend fun getNowPlayingMovies(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBMovieResponse>
 
     @GET("movie/top_rated")
-    suspend fun getTopRatedMovies(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBMovieResponse
+    suspend fun getTopRatedMovies(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBMovieResponse>
 
     @GET("genre/movie/list")
-    suspend fun getMovieGenres(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): GenreResponse
+    suspend fun getMovieGenres(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<GenreResponse>
 
     @GET("trending/tv/week")
-    suspend fun getPopularSeries(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBSeriesResponse
+    suspend fun getPopularSeries(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBSeriesResponse>
 
     @GET("tv/airing_today")
-    suspend fun getAiringTodaySeries(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBSeriesResponse
+    suspend fun getAiringTodaySeries(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBSeriesResponse>
 
     @GET("tv/top_rated")
-    suspend fun getTopRatedSeries(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBSeriesResponse
+    suspend fun getTopRatedSeries(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBSeriesResponse>
 
     @GET("genre/tv/list")
-    suspend fun getSeriesGenres(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): GenreResponse
+    suspend fun getSeriesGenres(@Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<GenreResponse>
 
     @GET("movie/{id}")
-    suspend fun getMovieDetails(@Path("id") id: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBMovieDetail
+    suspend fun getMovieDetails(@Path("id") id: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBMovieDetail>
 
     @GET("tv/{id}")
-    suspend fun getSeriesDetails(@Path("id") id: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBSeriesDetail
+    suspend fun getSeriesDetails(@Path("id") id: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBSeriesDetail>
 
     @GET("tv/{id}/season/{season}")
-    suspend fun getSeasonDetails(@Path("id") seriesId: String, @Path("season") seasonNumber: Int, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBSeasonDetail
+    suspend fun getSeasonDetails(@Path("id") seriesId: String, @Path("season") seasonNumber: Int, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBSeasonDetail>
 
     @GET("search/movie")
-    suspend fun searchMovies(@Query("query") query: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBMovieResponse
+    suspend fun searchMovies(@Query("query") query: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBMovieResponse>
 
     @GET("search/tv")
-    suspend fun searchSeries(@Query("query") query: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): TMDBSeriesResponse
+    suspend fun searchSeries(@Query("query") query: String, @Query("api_key") key: String = "232b810ad3c2b5d7b447046ab19f2029"): Response<TMDBSeriesResponse>
 }
 
 object FreeRetrofitClient {
