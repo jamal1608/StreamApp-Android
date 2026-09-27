@@ -1,7 +1,10 @@
 ﻿package com.streamapp.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,49 +13,53 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.streamapp.R
 import com.streamapp.api.TMDBSeriesItem
-import com.streamapp.databinding.ItemMovieBinding
 
 class SeriesAdapter(
     private val onItemClick: (TMDBSeriesItem) -> Unit
 ) : ListAdapter<TMDBSeriesItem, SeriesAdapter.SeriesViewHolder>(SeriesDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeriesViewHolder {
-        val binding = ItemMovieBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SeriesViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_movie, parent, false)
+        return SeriesViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: SeriesViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class SeriesViewHolder(private val binding: ItemMovieBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class SeriesViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
         fun bind(series: TMDBSeriesItem) {
-            binding.tvTitle.text = series.name
-            binding.tvInfo.text = buildString {
+            val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
+            val tvInfo = itemView.findViewById<TextView>(R.id.tvInfo)
+            val imgPoster = itemView.findViewById<ImageView>(R.id.imgPoster)
+            val tvQuality = itemView.findViewById<TextView>(R.id.tvQuality)
+
+            tvTitle.text = series.name
+            tvInfo.text = buildString {
                 append(series.getYear())
                 if (series.getRating() != "0.0") append(" | ${series.getRating()}")
             }
 
-            Glide.with(binding.root.context)
+            Glide.with(itemView.context)
                 .load(series.getPosterUrl())
                 .transform(CenterCrop(), RoundedCorners(16))
                 .placeholder(R.drawable.shimmer_item)
                 .error(R.drawable.shimmer_item)
-                .into(binding.imgPoster)
+                .into(imgPoster)
 
             if (series.voteAverage >= 7.0) {
-                binding.tvQuality.text = "HD"
-                binding.tvQuality.visibility = android.view.View.VISIBLE
+                tvQuality.text = "HD"
+                tvQuality.visibility = View.VISIBLE
             } else if (series.voteAverage >= 5.0) {
-                binding.tvQuality.text = "SD"
-                binding.tvQuality.visibility = android.view.View.VISIBLE
+                tvQuality.text = "SD"
+                tvQuality.visibility = View.VISIBLE
             } else {
-                binding.tvQuality.visibility = android.view.View.GONE
+                tvQuality.visibility = View.GONE
             }
 
-            binding.root.setOnClickListener { onItemClick(series) }
+            itemView.setOnClickListener { onItemClick(series) }
         }
     }
 

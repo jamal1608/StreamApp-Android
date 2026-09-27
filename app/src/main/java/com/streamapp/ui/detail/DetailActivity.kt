@@ -86,13 +86,13 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun setupAd() {
-        val adView = AdView(this)
-        adView.adSize = AdSize.BANNER
-        adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+        val adBanner = AdView(this)
+        adBanner.adSize = AdSize.BANNER
+        adBanner.adUnitId = "ca-app-pub-3940256099942544/6300978111"
         val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adBanner.loadAd(adRequest)
         this.adView.removeAllViews()
-        this.adView.addView(adView)
+        this.adView.addView(adBanner)
     }
 
     private fun loadDetails() {

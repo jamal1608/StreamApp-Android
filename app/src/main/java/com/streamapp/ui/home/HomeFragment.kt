@@ -108,14 +108,14 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupAd() {
-        val adView = AdView(requireContext())
-        adView.adSize = AdSize.BANNER
-        adView.adUnitId = "ca-app-pub-3940256099942544/6300978111" // Test ad unit
+        val adBanner = AdView(requireContext())
+        adBanner.adSize = AdSize.BANNER
+        adBanner.adUnitId = "ca-app-pub-3940256099942544/6300978111"
         val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adBanner.loadAd(adRequest)
 
         adContainer.removeAllViews()
-        adContainer.addView(adView)
+        adContainer.addView(adBanner)
     }
 
     private fun observeViewModel() {

@@ -1,12 +1,14 @@
 ﻿package com.streamapp.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.streamapp.R
 import com.streamapp.api.TMDBEpisode
-import com.streamapp.databinding.ItemEpisodeBinding
 
 class EpisodeAdapter : ListAdapter<TMDBEpisode, EpisodeAdapter.EpisodeViewHolder>(EpisodeDiffCallback()) {
 
@@ -21,28 +23,32 @@ class EpisodeAdapter : ListAdapter<TMDBEpisode, EpisodeAdapter.EpisodeViewHolder
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EpisodeViewHolder {
-        val binding = ItemEpisodeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return EpisodeViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_episode, parent, false)
+        return EpisodeViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: EpisodeViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class EpisodeViewHolder(private val binding: ItemEpisodeBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class EpisodeViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
         fun bind(episode: TMDBEpisode) {
-            binding.tvEpNumber.text = episode.episodeNumber.toString()
-            binding.tvEpTitle.text = episode.name
-            binding.tvEpInfo.text = buildString {
+            val tvEpNumber = itemView.findViewById<TextView>(R.id.tvEpNumber)
+            val tvEpTitle = itemView.findViewById<TextView>(R.id.tvEpTitle)
+            val tvEpInfo = itemView.findViewById<TextView>(R.id.tvEpInfo)
+
+            tvEpNumber.text = episode.episodeNumber.toString()
+            tvEpTitle.text = episode.name
+            tvEpInfo.text = buildString {
                 if (episode.runtime > 0) append("${episode.runtime}m")
                 if (episode.airDate.isNotEmpty()) {
                     if (isNotEmpty()) append(" | ")
                     append(episode.airDate)
                 }
             }
-            binding.root.setOnClickListener {
+            itemView.setOnClickListener {
                 onEpisodeClick?.invoke(episode.episodeNumber)
             }
         }

@@ -1,11 +1,13 @@
 ﻿package com.streamapp.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.streamapp.R
 import com.streamapp.api.TMDBSeasonDetail
-import com.streamapp.databinding.ItemSeasonBinding
 
 class SeasonAdapter : RecyclerView.Adapter<SeasonAdapter.SeasonViewHolder>() {
 
@@ -23,8 +25,8 @@ class SeasonAdapter : RecyclerView.Adapter<SeasonAdapter.SeasonViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SeasonViewHolder {
-        val binding = ItemSeasonBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return SeasonViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_season, parent, false)
+        return SeasonViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: SeasonViewHolder, position: Int) {
@@ -33,18 +35,21 @@ class SeasonAdapter : RecyclerView.Adapter<SeasonAdapter.SeasonViewHolder>() {
 
     override fun getItemCount() = seasons.size
 
-    inner class SeasonViewHolder(private val binding: ItemSeasonBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class SeasonViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
         fun bind(season: TMDBSeasonDetail) {
-            binding.tvSeasonTitle.text = season.name.ifEmpty { "Season ${season.seasonNumber}" }
+            val tvSeasonTitle = itemView.findViewById<TextView>(R.id.tvSeasonTitle)
+            val rvEpisodes = itemView.findViewById<RecyclerView>(R.id.rvEpisodes)
+
+            tvSeasonTitle.text = season.name.ifEmpty { "Season ${season.seasonNumber}" }
 
             val episodeAdapter = EpisodeAdapter()
             episodeAdapter.setEpisodes(season.episodes)
             episodeAdapter.setOnEpisodeClickListener { epNum ->
                 onEpisodeClick?.invoke(season.seasonNumber.toString(), season.seasonNumber, epNum)
             }
-            binding.rvEpisodes.apply {
+            rvEpisodes.apply {
                 layoutManager = LinearLayoutManager(context)
                 adapter = episodeAdapter
                 isNestedScrollingEnabled = false

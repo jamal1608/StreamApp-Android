@@ -133,14 +133,14 @@ class MoviesFragment : Fragment() {
     }
 
     private fun setupAd() {
-        val adView = com.google.android.gms.ads.AdView(requireContext())
-        adView.adSize = AdSize.BANNER
-        adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
+        val adBanner = com.google.android.gms.ads.AdView(requireContext())
+        adBanner.adSize = AdSize.BANNER
+        adBanner.adUnitId = "ca-app-pub-3940256099942544/6300978111"
         val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        adBanner.loadAd(adRequest)
 
         this.adView.removeAllViews()
-        this.adView.addView(adView)
+        this.adView.addView(adBanner)
     }
 
     private fun observeViewModel() {

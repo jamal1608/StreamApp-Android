@@ -1,7 +1,10 @@
 ﻿package com.streamapp.adapters
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -10,35 +13,37 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.streamapp.R
 import com.streamapp.api.TMDBSeriesItem
-import com.streamapp.databinding.ItemCarouselBinding
 
 class CarouselAdapter(
     private val onItemClick: (TMDBSeriesItem) -> Unit
 ) : ListAdapter<TMDBSeriesItem, CarouselAdapter.CarouselViewHolder>(CarouselDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CarouselViewHolder {
-        val binding = ItemCarouselBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return CarouselViewHolder(binding)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_carousel, parent, false)
+        return CarouselViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: CarouselViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    inner class CarouselViewHolder(private val binding: ItemCarouselBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    inner class CarouselViewHolder(itemView: View) :
+        RecyclerView.ViewHolder(itemView) {
 
         fun bind(item: TMDBSeriesItem) {
-            binding.tvTitle.text = item.name
+            val tvTitle = itemView.findViewById<TextView>(R.id.tvTitle)
+            val imgPoster = itemView.findViewById<ImageView>(R.id.imgPoster)
 
-            Glide.with(binding.root.context)
+            tvTitle.text = item.name
+
+            Glide.with(itemView.context)
                 .load(item.getPosterUrl())
                 .transform(CenterCrop(), RoundedCorners(8))
                 .placeholder(R.drawable.shimmer_item)
                 .error(R.drawable.shimmer_item)
-                .into(binding.imgPoster)
+                .into(imgPoster)
 
-            binding.root.setOnClickListener { onItemClick(item) }
+            itemView.setOnClickListener { onItemClick(item) }
         }
     }
 
