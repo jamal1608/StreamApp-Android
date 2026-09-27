@@ -5,11 +5,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.google.android.material.chip.ChipGroup
+import com.streamapp.R
 import com.streamapp.adapters.ChannelAdapter
-import com.streamapp.databinding.FragmentLiveTvBinding
 import com.streamapp.ui.player.PlayerActivity
 import com.streamapp.viewmodels.LiveTvViewModel
 import com.google.android.gms.ads.AdRequest
@@ -17,18 +21,26 @@ import com.google.android.gms.ads.AdSize
 
 class LiveTvFragment : Fragment() {
 
-    private var _binding: FragmentLiveTvBinding? = null
-    private val binding get() = _binding!!
     private val viewModel: LiveTvViewModel by viewModels()
     private lateinit var adapter: ChannelAdapter
 
+    private lateinit var chipGroupCategories: ChipGroup
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var adView: LinearLayout
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentLiveTvBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_live_tv, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        chipGroupCategories = view.findViewById(R.id.chipGroupCategories)
+        recyclerView = view.findViewById(R.id.recyclerView)
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
+        adView = view.findViewById(R.id.adView)
+
         setupRecyclerView()
         setupSwipeRefresh()
         setupAd()
@@ -44,14 +56,14 @@ class LiveTvFragment : Fragment() {
             startActivity(intent)
         }
 
-        binding.recyclerView.apply {
+        recyclerView.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = this@LiveTvFragment.adapter
         }
     }
 
     private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener {
+        swipeRefresh.setOnRefreshListener {
             viewModel.loadChannels()
         }
     }
@@ -63,14 +75,13 @@ class LiveTvFragment : Fragment() {
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
-        binding.adView.removeAllViews()
-        binding.adView.addView(adView)
+        this.adView.removeAllViews()
+        this.adView.addView(adView)
     }
 
     private fun setupCategories() {
         viewModel.categories.observe(viewLifecycleOwner) { categories ->
-            val chipGroup = binding.chipGroupCategories
-            chipGroup.removeAllViews()
+            chipGroupCategories.removeAllViews()
             categories.forEach { category ->
                 val chip = com.google.android.material.chip.Chip(requireContext()).apply {
                     text = category
@@ -79,7 +90,7 @@ class LiveTvFragment : Fragment() {
                         viewModel.filterByCategory(category)
                     }
                 }
-                chipGroup.addView(chip)
+                chipGroupCategories.addView(chip)
             }
         }
     }
@@ -94,12 +105,7 @@ class LiveTvFragment : Fragment() {
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.swipeRefresh.isRefreshing = isLoading
+            swipeRefresh.isRefreshing = isLoading
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

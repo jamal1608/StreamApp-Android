@@ -5,14 +5,17 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.streamapp.R
 import com.streamapp.adapters.CarouselAdapter
 import com.streamapp.adapters.MovieAdapter
-import com.streamapp.databinding.FragmentHomeBinding
 import com.streamapp.ui.detail.DetailActivity
 import com.streamapp.viewmodels.HomeViewModel
 import com.google.android.gms.ads.AdRequest
@@ -21,21 +24,31 @@ import com.google.android.gms.ads.AdView
 
 class HomeFragment : Fragment() {
 
-    private var _binding: FragmentHomeBinding? = null
-    private val binding get() = _binding!!
     private val viewModel: HomeViewModel by viewModels()
 
     private lateinit var popularMoviesAdapter: MovieAdapter
     private lateinit var trendingAdapter: MovieAdapter
     private lateinit var seriesAdapter: CarouselAdapter
 
+    private lateinit var rvPopularMovies: RecyclerView
+    private lateinit var rvTrending: RecyclerView
+    private lateinit var rvPopularSeries: RecyclerView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
+    private lateinit var adContainer: FrameLayout
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        return binding.root
+        return inflater.inflate(R.layout.fragment_home, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        rvPopularMovies = view.findViewById(R.id.rvPopularMovies)
+        rvTrending = view.findViewById(R.id.rvTrending)
+        rvPopularSeries = view.findViewById(R.id.rvPopularSeries)
+        swipeRefresh = view.findViewById(R.id.swipeRefresh)
+        adContainer = view.findViewById(R.id.adContainer)
+
         setupAdapters()
         setupRecyclerViews()
         setupSwipeRefresh()
@@ -68,27 +81,27 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupRecyclerViews() {
-        binding.rvPopularMovies.apply {
+        rvPopularMovies.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = popularMoviesAdapter
         }
 
-        binding.rvTrending.apply {
+        rvTrending.apply {
             layoutManager = GridLayoutManager(context, 2)
             adapter = trendingAdapter
         }
 
-        binding.rvPopularSeries.apply {
+        rvPopularSeries.apply {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = seriesAdapter
         }
     }
 
     private fun setupSwipeRefresh() {
-        binding.swipeRefresh.setOnRefreshListener {
+        swipeRefresh.setOnRefreshListener {
             viewModel.loadData()
         }
-        binding.swipeRefresh.setColorSchemeResources(
+        swipeRefresh.setColorSchemeResources(
             com.streamapp.R.color.primary,
             com.streamapp.R.color.secondary
         )
@@ -101,8 +114,8 @@ class HomeFragment : Fragment() {
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
-        binding.adContainer.removeAllViews()
-        binding.adContainer.addView(adView)
+        adContainer.removeAllViews()
+        adContainer.addView(adView)
     }
 
     private fun observeViewModel() {
@@ -119,7 +132,7 @@ class HomeFragment : Fragment() {
         }
 
         viewModel.isLoading.observe(viewLifecycleOwner) { isLoading ->
-            binding.swipeRefresh.isRefreshing = isLoading
+            swipeRefresh.isRefreshing = isLoading
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -127,10 +140,5 @@ class HomeFragment : Fragment() {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -3,10 +3,16 @@
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import android.widget.Toolbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -15,7 +21,6 @@ import com.streamapp.adapters.SeasonAdapter
 import com.streamapp.api.FreeRetrofitClient
 import com.streamapp.api.TMDBMovieDetail
 import com.streamapp.api.TMDBSeriesDetail
-import com.streamapp.databinding.ActivityDetailBinding
 import com.streamapp.ui.player.PlayerActivity
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
@@ -24,15 +29,39 @@ import kotlinx.coroutines.launch
 
 class DetailActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityDetailBinding
+    private lateinit var toolbar: Toolbar
+    private lateinit var imgBackdrop: ImageView
+    private lateinit var imgPoster: ImageView
+    private lateinit var tvTitle: TextView
+    private lateinit var tvMeta: TextView
+    private lateinit var tvDescription: TextView
+    private lateinit var tvRating: TextView
+    private lateinit var tvYear: TextView
+    private lateinit var tvCategory: TextView
+    private lateinit var btnWatch: ImageButton
+    private lateinit var rvEpisodes: RecyclerView
+    private lateinit var adView: LinearLayout
+
     private lateinit var seasonAdapter: SeasonAdapter
     private var contentId: String = ""
     private var contentType: String = "movie"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDetailBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_detail)
+
+        toolbar = findViewById(R.id.toolbar)
+        imgBackdrop = findViewById(R.id.imgBackdrop)
+        imgPoster = findViewById(R.id.imgPoster)
+        tvTitle = findViewById(R.id.tvTitle)
+        tvMeta = findViewById(R.id.tvMeta)
+        tvDescription = findViewById(R.id.tvDescription)
+        tvRating = findViewById(R.id.tvRating)
+        tvYear = findViewById(R.id.tvYear)
+        tvCategory = findViewById(R.id.tvCategory)
+        btnWatch = findViewById(R.id.btnWatch)
+        rvEpisodes = findViewById(R.id.rvEpisodes)
+        adView = findViewById(R.id.adView)
 
         contentId = intent.getStringExtra("id") ?: ""
         contentType = intent.getStringExtra("type") ?: "movie"
@@ -44,12 +73,12 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        binding.toolbar.setNavigationOnClickListener { finish() }
+        toolbar.setNavigationOnClickListener { finish() }
     }
 
     private fun setupSeasonAdapter() {
         seasonAdapter = SeasonAdapter()
-        binding.rvEpisodes.apply {
+        rvEpisodes.apply {
             layoutManager = LinearLayoutManager(this@DetailActivity)
             adapter = seasonAdapter
             isNestedScrollingEnabled = false
@@ -62,8 +91,8 @@ class DetailActivity : AppCompatActivity() {
         adView.adUnitId = "ca-app-pub-3940256099942544/6300978111"
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
-        binding.adView.removeAllViews()
-        binding.adView.addView(adView)
+        this.adView.removeAllViews()
+        this.adView.addView(adView)
     }
 
     private fun loadDetails() {
@@ -88,19 +117,19 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun displayMovieDetails(movie: TMDBMovieDetail) {
-        binding.tvTitle.text = movie.title
-        binding.tvDescription.text = movie.overview
-        binding.tvMeta.text = "${movie.getYear()} | ${movie.getGenresString()}"
-        binding.tvRating.text = "Rating: ${movie.getRating()}"
-        binding.tvYear.text = "Year: ${movie.getYear()}"
-        binding.tvCategory.text = movie.getGenresString()
+        tvTitle.text = movie.title
+        tvDescription.text = movie.overview
+        tvMeta.text = "${movie.getYear()} | ${movie.getGenresString()}"
+        tvRating.text = "Rating: ${movie.getRating()}"
+        tvYear.text = "Year: ${movie.getYear()}"
+        tvCategory.text = movie.getGenresString()
 
         Glide.with(this).load(movie.getBackdropUrl()).transform(CenterCrop())
-            .placeholder(R.drawable.shimmer_item).into(binding.imgBackdrop)
+            .placeholder(R.drawable.shimmer_item).into(imgBackdrop)
         Glide.with(this).load(movie.getPosterUrl()).transform(CenterCrop(), RoundedCorners(16))
-            .placeholder(R.drawable.shimmer_item).into(binding.imgPoster)
+            .placeholder(R.drawable.shimmer_item).into(imgPoster)
 
-        binding.btnWatch.setOnClickListener {
+        btnWatch.setOnClickListener {
             val intent = Intent(this, PlayerActivity::class.java)
             intent.putExtra("title", movie.title)
             intent.putExtra("id", movie.id.toString())
@@ -110,24 +139,24 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun displaySeriesDetails(series: TMDBSeriesDetail) {
-        binding.tvTitle.text = series.name
-        binding.tvDescription.text = series.overview
-        binding.tvMeta.text = "${series.getYear()} | ${series.getGenresString()}"
-        binding.tvRating.text = "Rating: ${series.getRating()}"
-        binding.tvYear.text = "Year: ${series.getYear()}"
-        binding.tvCategory.text = series.getGenresString()
+        tvTitle.text = series.name
+        tvDescription.text = series.overview
+        tvMeta.text = "${series.getYear()} | ${series.getGenresString()}"
+        tvRating.text = "Rating: ${series.getRating()}"
+        tvYear.text = "Year: ${series.getYear()}"
+        tvCategory.text = series.getGenresString()
 
         Glide.with(this).load(series.getBackdropUrl()).transform(CenterCrop())
-            .placeholder(R.drawable.shimmer_item).into(binding.imgBackdrop)
+            .placeholder(R.drawable.shimmer_item).into(imgBackdrop)
         Glide.with(this).load(series.getPosterUrl()).transform(CenterCrop(), RoundedCorners(16))
-            .placeholder(R.drawable.shimmer_item).into(binding.imgPoster)
+            .placeholder(R.drawable.shimmer_item).into(imgPoster)
 
         if (series.seasons.isNotEmpty()) {
-            binding.rvEpisodes.visibility = View.VISIBLE
+            rvEpisodes.visibility = View.VISIBLE
             loadSeasons(series.id, series.seasons.size)
         }
 
-        binding.btnWatch.setOnClickListener {
+        btnWatch.setOnClickListener {
             val intent = Intent(this, PlayerActivity::class.java)
             intent.putExtra("title", series.name)
             intent.putExtra("id", series.id.toString())

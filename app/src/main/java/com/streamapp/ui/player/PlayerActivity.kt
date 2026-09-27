@@ -1,7 +1,8 @@
 ﻿package com.streamapp.ui.player
 
 import android.os.Bundle
-import android.view.View
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.media3.common.MediaItem
@@ -9,27 +10,36 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.ui.PlayerView
+import com.google.android.material.chip.ChipGroup
+import com.streamapp.R
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
-import com.streamapp.databinding.ActivityPlayerBinding
 
 class PlayerActivity : AppCompatActivity() {
 
-    private lateinit var binding: ActivityPlayerBinding
     private var player: ExoPlayer? = null
     private var videoUrl: String = ""
     private var videoTitle: String = ""
     private val streamUrls = mutableListOf<String>()
 
+    private lateinit var tvTitle: TextView
+    private lateinit var chipGroupServers: ChipGroup
+    private lateinit var playerView: PlayerView
+    private lateinit var adView: LinearLayout
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        setContentView(R.layout.activity_player)
+
+        tvTitle = findViewById(R.id.tvTitle)
+        chipGroupServers = findViewById(R.id.chipGroupServers)
+        playerView = findViewById(R.id.playerView)
+        adView = findViewById(R.id.adView)
 
         videoUrl = intent.getStringExtra("url") ?: ""
         videoTitle = intent.getStringExtra("title") ?: ""
 
-        binding.tvTitle.text = videoTitle
+        tvTitle.text = videoTitle
         setupAd()
         setupServers()
         initializePlayer()
@@ -42,8 +52,8 @@ class PlayerActivity : AppCompatActivity() {
         val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
 
-        binding.adView.removeAllViews()
-        binding.adView.addView(adView)
+        this.adView.removeAllViews()
+        this.adView.addView(adView)
     }
 
     private fun setupServers() {
@@ -68,13 +78,13 @@ class PlayerActivity : AppCompatActivity() {
                     }
                 }
             }
-            binding.chipGroupServers.addView(chip)
+            chipGroupServers.addView(chip)
         }
     }
 
     private fun initializePlayer() {
         player = ExoPlayer.Builder(this).build().also { exoPlayer ->
-            binding.playerView.player = exoPlayer
+            playerView.player = exoPlayer
 
             exoPlayer.addListener(object : Player.Listener {
                 override fun onPlayerError(error: PlaybackException) {
